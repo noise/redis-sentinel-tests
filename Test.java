@@ -5,9 +5,15 @@ import java.util.Date;
 public class Test {
 
     public static void main(String argv[]) {
+	String host = "localhost";
+	try {
+	    host = argv[0];
+	}
+	catch (Exception e) {}
+
 	Long sleepMillis = 50L;
 	try {
-	    sleepMillis = Long.parseLong(argv[0]);
+	    sleepMillis = Long.parseLong(argv[1]);
 	}
 	catch (Exception e) {}
 
@@ -16,7 +22,8 @@ public class Test {
 	conf.setTestOnBorrow(true);
 	conf.setMaxActive(10);
 	
-	JedisPool pool = new JedisPool(conf, "10.1.10.11", 6379, 1000, null);
+	System.out.println("starting pool for host " + host);
+	JedisPool pool = new JedisPool(conf, host, 6379, 1000, null);
 	Jedis jedis = null;
 	int i=0;
 	int fails = 0;
