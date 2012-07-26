@@ -64,4 +64,4 @@ Now, edit the redis-master.conf, set it to slaveof the new master (slave1, port 
 * Killing both instances will result in a state that sentinels will never recover from
 * What's a safe setting for down-after-milliseconds? will setting this too low cause false positives when there are slow operations (e.g. big sort)?
 * (fixed) starting a downed master back up w/o reconfig'ing as slave results in sentinel confusion
-
+* Since the LB is only checking "role:master" on each instance, a poorly config'd instance can result in 2 masters being "up"
