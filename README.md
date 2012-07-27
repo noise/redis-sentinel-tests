@@ -31,11 +31,13 @@ redis-sentinel sent3.conf
 
 You should see the slave connect to the master and sync, and the sentinels connect to the master, discover one another, and find the slave.
 
-Note the load-balancer config is outside the scope of this doc but basically you just need a virtual server that has the master and slave instances as pool members and monitors them for "up" status by checking "info" output for "role:master".
+I've included a sample F5 load-balancer config for this setup. It works well as long as you don't accidentally bring up 2 instances in the master role.
+
+There's also a sample haproxy config, but HAProxy lacks the ability to do a custom TCP req/reply health check, so it does not properly.
 
 # Run some tests
 
-Now we can run our test client:
+Now we can run our test client, connecting to the load-balancer virtual IP:
 
 ```
 export CLASSPATH=$CLASSPATH:commons-pool-1.6.jar:jedis-2.1.0.jar
@@ -61,7 +63,7 @@ Now, edit the redis-master.conf, set it to slaveof the new master (slave1, port 
 
 # TODO/Issues
 
-* Killing both instances will result in a state that sentinels will never recover from
+* Killing both instances can result in a state that sentinels will never recover from
 * What's a safe setting for down-after-milliseconds? will setting this too low cause false positives when there are slow operations (e.g. big sort)?
 * (fixed) starting a downed master back up w/o reconfig'ing as slave results in sentinel confusion
 * Since the LB is only checking "role:master" on each instance, a poorly config'd instance can result in 2 masters being "up"
